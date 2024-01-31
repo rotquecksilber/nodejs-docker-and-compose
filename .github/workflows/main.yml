@@ -1,6 +1,9 @@
 name: Docker Build and Deploy
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build-and-push:
@@ -21,13 +24,27 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/setup-buildx-action@v2
-        with:
-          buildkitd-flags: --debug
+      - name: Clone repository on server
+        run: |
+          echo "$DEPLOY_KEY" > deploy_key.pem
+          chmod 600 deploy_key.pem
+          ssh -i deploy_key.pem -o "StrictHostKeyChecking=no" ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} <<EOF
+            git clone git@github.com:rotquecksilber/nodejs-docker-and-compose.git /home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose
+          EOF
+        env:
+          DEPLOY_KEY: ${{ secrets.SERVER_SSH_KEY }}
 
-      - name: List Docker images
-        run: docker images
+      - name: Build Backend Docker image
+        run: docker build -t rotquecksilber/kupi_backend ./backend
+
+      - name: Push Backend Docker image
+        run: docker push rotquecksilber/kupi_backend
+
+      - name: Build Frontend Docker image
+        run: docker build -t rotquecksilber/kupi_frontend ./frontend
+
+      - name: Push Frontend Docker image
+        run: docker push rotquecksilber/kupi_frontend
 
       - name: Deploy to server
         run: |
@@ -49,8 +66,7 @@ jobs:
             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             export POSTGRES_PGDATA=${{ secrets.POSTGRES_PGDATA }}
-            git clone git@github.com:rotquecksilber/nodejs-docker-and-compose.git
-            cd home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose
+            cd /home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose
             docker-compose pull
             docker-compose up -d
             docker image prune -f

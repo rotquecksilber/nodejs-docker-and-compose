@@ -1,9 +1,6 @@
 version: '3.8'
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     image: rotquecksilber/kupi_backend
     ports:
       - '4000:3000'
@@ -23,9 +20,6 @@ services:
     restart: unless-stopped
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
     image: rotquecksilber/kupi_frontend
     ports:
       - '8081:80'
