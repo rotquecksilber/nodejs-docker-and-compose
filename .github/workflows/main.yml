@@ -65,6 +65,7 @@ jobs:
             export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             export POSTGRES_PGDATA=${{ secrets.POSTGRES_PGDATA }}
             cd /home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose
+            docker-compose down
             docker-compose pull
             docker-compose up -d
             docker image prune -f
