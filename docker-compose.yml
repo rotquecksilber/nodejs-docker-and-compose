@@ -22,7 +22,7 @@ services:
   frontend:
     image: rotquecksilber/kupi_frontend
     ports:
-      - '8081:8080'
+      - '8081:80'
     restart: unless-stopped
 
   database:
