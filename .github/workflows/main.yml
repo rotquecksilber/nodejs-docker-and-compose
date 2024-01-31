@@ -49,6 +49,8 @@ jobs:
             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             export POSTGRES_PGDATA=${{ secrets.POSTGRES_PGDATA }}
+            git clone git@github.com:rotquecksilber/nodejs-docker-and-compose.git
+            cd home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose
             docker-compose pull
             docker-compose up -d
             docker image prune -f
