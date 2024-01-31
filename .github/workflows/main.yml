@@ -28,11 +28,10 @@ jobs:
         run: |
           echo "$DEPLOY_KEY" > deploy_key.pem
           chmod 600 deploy_key.pem
-          ssh -i deploy_key.pem -o "StrictHostKeyChecking=no" ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} <<EOF
-            git clone git@github.com:rotquecksilber/nodejs-docker-and-compose.git /home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose
-          EOF
+          ssh -i deploy_key.pem -o "StrictHostKeyChecking=no" ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "cd /home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose && git pull"
         env:
           DEPLOY_KEY: ${{ secrets.SERVER_SSH_KEY }}
+
 
       - name: Build Backend Docker image
         run: docker build -t rotquecksilber/kupi_backend ./backend
