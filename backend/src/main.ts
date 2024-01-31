@@ -13,7 +13,7 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
   app.use(nestCsrf());
-
+  app.enableCors();
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new ServerExceptionFilter());

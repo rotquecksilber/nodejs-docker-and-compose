@@ -1,0 +1,50 @@
+name: Docker Build and Deploy
+
+on: [push]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/setup-buildx-action@v2
+        with:
+          buildkitd-flags: --debug
+
+      - name: List Docker images
+        run: docker images
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} <<EOF
+            export DB_HOST=${{ secrets.DB_HOST }}
+            export DB_PORT=${{ secrets.DB_PORT }}
+            export DB_USERNAME=${{ secrets.DB_USERNAME }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export DB_NAME=${{ secrets.DB_NAME }}
+            export DB_SYNCHRONIZE=${{ secrets.DB_SYNCHRONIZE }}
+            export TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+            export TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
+            export PORT=${{ secrets.PORT }}
+            export JWT_SECRET=${{ secrets.JWT_SECRET }}
+            export POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+            export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            export POSTGRES_PGDATA=${{ secrets.POSTGRES_PGDATA }}
+            docker-compose pull
+            docker-compose up -d
+            docker image prune -f
+          EOF
+        env:
+          DEPLOY_KEY: ${{ secrets.SERVER_SSH_KEY }}

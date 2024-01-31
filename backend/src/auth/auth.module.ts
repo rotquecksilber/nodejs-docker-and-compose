@@ -22,7 +22,7 @@ import { StringSanitizerService } from '../users/services/string-sanitizer.servi
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_KEY'),
+        secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: '10d' },
       }),
       inject: [ConfigService],

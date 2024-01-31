@@ -47,7 +47,8 @@
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.17",
     "winston": "^3.11.0",
-    "winston-telegram": "^2.6.0"
+    "winston-telegram": "^2.6.0",
+    "helmet": "^7.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.5.0",
@@ -66,7 +67,6 @@
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "helmet": "^7.1.0",
     "jest": "28.1.2",
     "prettier": "^2.8.8",
     "source-map-support": "^0.5.21",
