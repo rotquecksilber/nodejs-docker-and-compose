@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Use Node.js 20.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 16.x
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,15 +23,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      - name: Clone repository on server
-        run: |
-          echo "$DEPLOY_KEY" > deploy_key.pem
-          chmod 600 deploy_key.pem
-          ssh -i deploy_key.pem -o "StrictHostKeyChecking=no" ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "cd /home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose && git pull"
-        env:
-          DEPLOY_KEY: ${{ secrets.SERVER_SSH_KEY }}
-
 
       - name: Build Backend Docker image
         run: docker build -t rotquecksilber/kupi_backend ./backend
@@ -44,6 +35,14 @@ jobs:
 
       - name: Push Frontend Docker image
         run: docker push rotquecksilber/kupi_frontend
+
+      - name: Clone repository on server
+        run: |
+          echo "$DEPLOY_KEY" > deploy_key.pem
+          chmod 600 deploy_key.pem
+          ssh -i deploy_key.pem -o "StrictHostKeyChecking=no" ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "cd /home/${{ secrets.SERVER_USERNAME }}/nodejs-docker-and-compose && git pull"
+        env:
+          DEPLOY_KEY: ${{ secrets.SERVER_SSH_KEY }}
 
       - name: Deploy to server
         run: |
