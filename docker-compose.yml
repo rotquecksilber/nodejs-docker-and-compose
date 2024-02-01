@@ -4,6 +4,7 @@ services:
     image: rotquecksilber/kupi_backend
     networks:
       - backend-network
+      - frontend-network
     ports:
       - '4000:3000'
     environment:
