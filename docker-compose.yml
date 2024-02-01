@@ -2,6 +2,8 @@ version: '3.3'
 services:
   backend:
     image: rotquecksilber/kupi_backend
+    networks:
+      - backend-network
     ports:
       - '4000:3000'
     environment:
@@ -21,12 +23,16 @@ services:
 
   frontend:
     image: rotquecksilber/kupi_frontend
+    networks:
+      - frontend-network
     ports:
-      - '80:80'
+      - '8081:80'
     restart: unless-stopped
 
   database:
     image: postgres:latest
+    networks:
+      - backend-network
     restart: unless-stopped
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -40,3 +46,6 @@ services:
       - postgres_data:/var/lib/postgresql/data/
 volumes:
   postgres_data:
+networks:
+  backend-network:
+  frontend-network:
