@@ -27,7 +27,7 @@ services:
     networks:
       - frontend-network
     ports:
-      - '8081:80'
+      - '80:80'
     restart: unless-stopped
 
   database:
