@@ -7,7 +7,6 @@ services:
       - '4000:3000'
     networks:
       - backend-network
-      - frontend-network
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
