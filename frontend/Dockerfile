@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 
-FROM nginx:1.23.1-alpine as deploy
+FROM nginx:latest as deploy
 COPY --from=builder /app/build /usr/share/nginx/html
 COPY nginx/conf.d/frontend.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
